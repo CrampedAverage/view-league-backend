@@ -1,53 +1,16 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use reqwest;
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Result};
-use std::collections::HashMap;
+use actix_web::{get, post, web, App, Either, HttpResponse, HttpServer, Responder};
+mod services;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct ChampionImage {
-    full: String,
-}
-#[derive(Serialize, Deserialize, Debug)]
-struct ChampionData {
-    version: String,
-    name: String,
-    id: String,
-    title: String,
-    image: ChampionImage,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct ResponseObject {
-    data: HashMap<String, ChampionData>,
-    version: String,
-    format: String,
-}
-
-async fn dto_champions(champion_api_response: &str) -> Result<String> {
-    let full_data: ResponseObject = serde_json::from_str(champion_api_response).unwrap();
-
-    // dbg!(&full_data);
-    let json_data = json!(&full_data);
-    dbg!(json_data.to_string());
-    println!("I WORK");
-    Ok(json_data.to_string())
-}
-
+type ChampionsResult = Either<HttpResponse, HttpResponse>;
 #[get("/champions")]
-async fn hello() -> impl Responder {
-    let body =
-        reqwest::get("http://ddragon.leagueoflegends.com/cdn/11.8.1/data/en_US/champion.json")
-            .await
-            .unwrap()
-            .text()
-            .await;
-
-    let data = body.unwrap();
-    let result = dto_champions(&*data).await.unwrap();
-
-    print!("hello world");
-    HttpResponse::Ok().body(result)
+async fn hello() -> ChampionsResult {
+    let result = services::champions::get_champions().await;
+    if result.is_ok() {
+        let data = result.unwrap();
+        Either::Left(HttpResponse::Ok().body(data))
+    } else {
+        Either::Right(HttpResponse::BadRequest().body("Bad Request"))
+    }
 }
 
 #[post("/echo")]
