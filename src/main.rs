@@ -1,9 +1,9 @@
-use actix_web::{get, post, web, App, Either, HttpResponse, HttpServer, Responder};
+use actix_web::{get, App, Either, HttpResponse, HttpServer};
 mod services;
 
 type ChampionsResult = Either<HttpResponse, HttpResponse>;
 #[get("/champions")]
-async fn hello() -> ChampionsResult {
+async fn champions() -> ChampionsResult {
     let result = services::champions::get_champions().await;
     if result.is_ok() {
         let data = result.unwrap();
@@ -13,22 +13,12 @@ async fn hello() -> ChampionsResult {
     }
 }
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             // .wrap(middleware::Compress::default())
-            .service(hello)
-            .route("/hey", web::get().to(manual_hello))
+            .service(champions)
     })
     .bind(("127.0.0.1", 4040))?
     .run()
