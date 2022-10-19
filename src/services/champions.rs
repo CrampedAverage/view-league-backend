@@ -6,6 +6,8 @@ use std::collections::HashMap;
 #[derive(Serialize, Deserialize, Debug)]
 struct ChampionImage {
     full: String,
+    w: u8,
+    h: u8,
 }
 #[derive(Serialize, Deserialize, Debug)]
 struct ChampionData {
