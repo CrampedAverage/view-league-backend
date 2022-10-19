@@ -1,4 +1,4 @@
-use actix_web::{get, App, Either, HttpResponse, HttpServer};
+use actix_web::{get, middleware, App, Either, HttpResponse, HttpServer};
 mod services;
 
 type ChampionsResult = Either<HttpResponse, HttpResponse>;
@@ -17,7 +17,7 @@ async fn champions() -> ChampionsResult {
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            // .wrap(middleware::Compress::default())
+            .wrap(middleware::Compress::default())
             .service(champions)
     })
     .bind(("127.0.0.1", 4040))?
