@@ -1,9 +1,14 @@
-use actix_web::{get, middleware, App, Either, HttpResponse, HttpServer};
+use actix_web::{
+    get, middleware,
+    web::{self},
+    App, Either, HttpResponse, HttpServer,
+};
+use serde::Deserialize;
 mod services;
 
-type ChampionsResult = Either<HttpResponse, HttpResponse>;
+type Responder = Either<HttpResponse, HttpResponse>;
 #[get("/champions")]
-async fn champions() -> ChampionsResult {
+async fn champions() -> Responder {
     let result = services::champions::get_champions().await;
     if result.is_ok() {
         let data = result.unwrap();
