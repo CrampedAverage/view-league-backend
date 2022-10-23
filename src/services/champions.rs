@@ -40,5 +40,5 @@ pub async fn get_champions() -> Result<String, String> {
             .await;
 
     let data = body.unwrap();
-    return dto_champions(&*data).await;
+    return dto_champions(&data).await;
 }
