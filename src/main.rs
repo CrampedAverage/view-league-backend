@@ -1,6 +1,6 @@
 use actix_web::{
     get, middleware,
-    web::{self},
+    web::{self, Data},
     App, Either, HttpResponse, HttpServer,
 };
 use serde::Deserialize;
@@ -43,12 +43,14 @@ async fn main() -> std::io::Result<()> {
     };
     let config = envy::from_env::<Configuration>().unwrap();
     let port = config.port;
-    // env::var(key)
+
     HttpServer::new(move || {
-        App::new()
-            .app_data(config.clone())
-            .wrap(middleware::Compress::default())
-            .service(web::scope("/api").service(champions).service(player))
+        App::new().wrap(middleware::Compress::default()).service(
+            web::scope("/api")
+                .app_data(Data::new(config.clone()))
+                .service(champions)
+                .service(player),
+        )
     })
     .bind(("127.0.0.1", port))?
     .run()
