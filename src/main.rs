@@ -18,10 +18,13 @@ async fn champions() -> Responder {
     }
 }
 
-#[get("/summoner/{name}")]
-async fn player(config: web::Data<Configuration>) -> Responder {
+#[get("/summoner/{region}/{name}")]
+async fn player(path: web::Path<(String, String)>, config: web::Data<Configuration>) -> Responder {
     let found = false;
-    println!("Adnan: {}", config.riot_api_key);
+    let (region, name) = path.into_inner();
+    let api_key = &config.riot_api_key;
+    println!("{}", api_key);
+
     if found {
         Either::Left(HttpResponse::Ok().body("FOUND"))
     } else {
