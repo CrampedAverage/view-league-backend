@@ -30,6 +30,7 @@ async fn dto_champions(champion_api_response: &str) -> Result<String, String> {
     let json_data = json!(&full_data);
     Ok(json_data.to_string())
 }
+
 pub async fn get_champions() -> Result<String, String> {
     let body =
         reqwest::get("http://ddragon.leagueoflegends.com/cdn/11.8.1/data/en_US/champion.json")
