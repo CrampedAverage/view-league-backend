@@ -48,8 +48,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(config.clone())
             .wrap(middleware::Compress::default())
-            .service(champions)
-        // .service(player)
+            .service(web::scope("/api").service(champions).service(player))
     })
     .bind(("127.0.0.1", port))?
     .run()
