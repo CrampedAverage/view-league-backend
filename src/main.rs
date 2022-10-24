@@ -1,3 +1,4 @@
+use crate::services::{champions::get_champions, player::get_summoner_data};
 use actix_web::{
     get, middleware,
     web::{self, Data},
@@ -9,7 +10,7 @@ mod services;
 type Responder = Either<HttpResponse, HttpResponse>;
 #[get("/champions")]
 async fn champions() -> Responder {
-    let result = services::champions::get_champions().await;
+    let result = get_champions().await;
     if result.is_ok() {
         let data = result.unwrap();
         Either::Left(HttpResponse::Ok().body(data))
@@ -19,11 +20,15 @@ async fn champions() -> Responder {
 }
 
 #[get("/summoner/{region}/{name}")]
-async fn player(path: web::Path<(String, String)>, config: web::Data<Configuration>) -> Responder {
+async fn summoner(
+    path: web::Path<(String, String)>,
+    config: web::Data<Configuration>,
+) -> Responder {
     let found = false;
     let (region, name) = path.into_inner();
     let api_key = &config.riot_api_key;
-    println!("{}", api_key);
+
+    let _result = get_summoner_data(region, name, api_key).await;
 
     if found {
         Either::Left(HttpResponse::Ok().body("FOUND"))
@@ -52,7 +57,7 @@ async fn main() -> std::io::Result<()> {
             web::scope("/api")
                 .app_data(Data::new(config.clone()))
                 .service(champions)
-                .service(player),
+                .service(summoner),
         )
     })
     .bind(("127.0.0.1", port))?
