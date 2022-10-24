@@ -30,10 +30,10 @@ pub async fn get_summoner_data(
     name: String,
     api_key: &String,
 ) -> Result<SummonerInfo, String> {
-    let player_info_result = get_summoner_info(region, name, api_key).await;
-    if player_info_result.is_err() {
-        let error_response = format!("{}", player_info_result.unwrap_err());
+    let summoner_info_result = get_summoner_info(region, name, api_key).await;
+    if summoner_info_result.is_err() {
+        let error_response = format!("{}", summoner_info_result.unwrap_err());
         return Err(error_response);
     }
-    return Ok(player_info_result.unwrap());
+    return Ok(summoner_info_result.unwrap());
 }
