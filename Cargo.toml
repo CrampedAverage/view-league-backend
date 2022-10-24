@@ -9,7 +9,7 @@ edition = "2021"
 actix-web = "4"
 dotenv = "0.15.0"
 envy = "0.4.2"
-reqwest = {version ="0.11.12", features = ["async-compression"]}
+reqwest = {version ="0.11.12", features = ["async-compression", "json"]}
 serde = { version = "1.0.145", features = ["derive"] }
 serde_json = "1.0.86"
 tokio = {version ="1.21.2", features = ["full"] }

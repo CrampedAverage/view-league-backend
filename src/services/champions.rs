@@ -1,6 +1,6 @@
 use reqwest;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+use serde_json::{json, to_string};
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -25,20 +25,9 @@ struct ResponseObject {
     format: String,
 }
 
-async fn dto_champions(champion_api_response: &str) -> Result<String, String> {
-    let full_data: ResponseObject = serde_json::from_str(champion_api_response).unwrap();
-    let json_data = json!(&full_data);
-    Ok(json_data.to_string())
-}
-
-pub async fn get_champions() -> Result<String, String> {
-    let body =
-        reqwest::get("http://ddragon.leagueoflegends.com/cdn/11.8.1/data/en_US/champion.json")
-            .await
-            .unwrap()
-            .text()
-            .await;
-
-    let data = body.unwrap();
-    return dto_champions(&data).await;
+pub async fn get_champions() -> Result<String, reqwest::Error> {
+    let url = "http://ddragon.leagueoflegends.com/cdn/11.8.1/data/en_US/champion.json";
+    let response = reqwest::get(url).await?.json::<ResponseObject>().await?;
+    let serialized_response = json!(response).to_string();
+    return Ok(serialized_response);
 }
