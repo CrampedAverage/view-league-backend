@@ -1,6 +1,6 @@
 use reqwest;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, to_string};
+use serde_json::json;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
