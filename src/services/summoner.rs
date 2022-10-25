@@ -19,21 +19,6 @@ pub struct SummonerInfoResponse {
     summonerLevel: u32,
 }
 
-pub async fn get_summoner_info(
-    query: &SummonerGetDataQuery,
-    api_key: &String,
-) -> Result<SummonerInfoResponse, reqwest::Error> {
-    let url = format!(
-        "https://{0}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{1}?api_key={2}",
-        query.region, query.summoner_name, api_key
-    );
-    let response = reqwest::get(url)
-        .await?
-        .json::<SummonerInfoResponse>()
-        .await?;
-    Ok(response)
-}
-
 #[derive(Deserialize, Serialize, Debug)]
 struct StatusBody {
     message: String,
@@ -81,6 +66,21 @@ type FetchResult<T> = std::result::Result<T, Box<dyn error::Error>>;
 enum SummonerRanksResponse {
     Ranks(Vec<SummonerRankInfo>),
     Error(Status),
+}
+
+async fn get_summoner_info(
+    query: &SummonerGetDataQuery,
+    api_key: &String,
+) -> Result<SummonerInfoResponse, reqwest::Error> {
+    let url = format!(
+        "https://{0}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{1}?api_key={2}",
+        query.region, query.summoner_name, api_key
+    );
+    let response = reqwest::get(url)
+        .await?
+        .json::<SummonerInfoResponse>()
+        .await?;
+    Ok(response)
 }
 
 async fn get_summoner_ranks(
