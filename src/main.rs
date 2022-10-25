@@ -1,4 +1,4 @@
-use crate::services::{champions::get_champions, player::get_summoner_data};
+use crate::services::{champions::get_champions, summoner::get_summoner_data};
 use actix_web::{
     get, middleware,
     web::{self, Data},
@@ -19,17 +19,23 @@ async fn champions() -> Responder {
     }
 }
 
-#[get("/summoner/{region}/{name}")]
+#[derive(Deserialize, Debug)]
+struct SummonerGetDataQuery {
+    summoner_name: String,
+    region: String,
+    continent: String,
+}
+
+#[get("/summoner/get-data")]
 async fn summoner(
-    path: web::Path<(String, String)>,
+    query: web::Query<SummonerGetDataQuery>,
     config: web::Data<Configuration>,
 ) -> Responder {
     let found = false;
-    let (region, name) = path.into_inner();
     let api_key = &config.riot_api_key;
 
-    let _result = get_summoner_data(region, name, api_key).await;
-
+    // let result = get_summoner_data(region, name, api_key).await;
+    // println!("{:#?}", result.unwrap());
     if found {
         Either::Left(HttpResponse::Ok().body("FOUND"))
     } else {
