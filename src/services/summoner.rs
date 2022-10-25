@@ -84,40 +84,59 @@ enum SummonerRanksResponse {
 }
 
 async fn get_summoner_ranks(
-    region: &String,
+    query: &SummonerGetDataQuery,
     id: &String,
     api_key: &String,
 ) -> FetchResult<SummonerRanksResponse> {
     let url = format!(
         "https://{0}.api.riotgames.com/lol/league/v4/entries/by-summoner/{1}?api_key={2}",
-        region, id, api_key
+        query.region, id, api_key
     );
-    println!("{}", url);
     let raw_response = reqwest::get(url).await?.text().await?;
     let response = serde_json::from_str::<SummonerRanksResponse>(&raw_response)?;
-    // println!("Hey Adnan: {:#?}", response);
+
+    Ok(response)
+}
+
+async fn get_summoner_matches(
+    query: &SummonerGetDataQuery,
+    puuid: &String,
+    api_key: &String,
+) -> FetchResult<Value> {
+    println!("hello");
+    let url = format!(
+        "https://{0}.api.riotgames.com/lol/match/v5/matches/by-puuid/{1}/ids?start=0&count={2}&api_key={3}",
+        query.continent, puuid, 5,api_key
+    );
+    let raw_response = reqwest::get(url).await?.text().await?;
+    let response = serde_json::from_str::<Value>(&raw_response)?;
 
     Ok(response)
 }
 
 pub async fn get_summoner_data(
-    region: String,
-    name: String,
+    query: SummonerGetDataQuery,
     api_key: &String,
 ) -> Result<SummonerInfoResponse, String> {
-    let summoner_info_result = get_summoner_info(&region, &name, api_key).await;
+    let summoner_info_result = get_summoner_info(&query, api_key).await;
     if summoner_info_result.is_err() {
-        let error_response = format!("{}", summoner_info_result.unwrap_err());
+        let error_response = format!("Error: {}", summoner_info_result.unwrap_err());
         return Err(error_response);
     }
     let summoner_info = summoner_info_result.unwrap();
-    let summoner_ranks_result = get_summoner_ranks(&region, &summoner_info.id, api_key).await;
+
+    let summoner_ranks_result = get_summoner_ranks(&query, &summoner_info.id, api_key).await;
     if summoner_ranks_result.is_err() {
         let error_response = format!("Error: {}", summoner_ranks_result.unwrap_err());
         return Err(error_response);
     }
     let summoner_ranks = summoner_ranks_result.unwrap();
-    // println!("{:#?}", summoner_info);
-    // println!("Hey Adnan:{:#?}", summoner_ranks_result.unwrap());
+
+    let summoner_matches_result = get_summoner_matches(&query, &summoner_info.puuid, api_key).await;
+    if summoner_matches_result.is_err() {
+        let error_response = format!("Error: {}", summoner_matches_result.unwrap_err());
+        return Err(error_response);
+    }
+
     return Ok(summoner_info);
 }
