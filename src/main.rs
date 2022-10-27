@@ -4,6 +4,7 @@ use crate::{
 };
 use actix_web::{get, middleware, web, App, Either, HttpResponse, HttpServer};
 use serde::Deserialize;
+use serde_json::json;
 
 mod configuration;
 mod lib;
@@ -31,13 +32,13 @@ pub struct SummonerGetDataQuery {
 
 #[get("/summoner/get-data")]
 async fn summoner(query: web::Query<SummonerGetDataQuery>) -> Responder {
-    let found = false;
     let api_key = get_api_key();
     println!("hehe");
     let result = get_summoner_data(query.into_inner(), &api_key).await;
 
-    if found {
-        Either::Left(HttpResponse::Ok().body("FOUND"))
+    if result.is_ok() {
+        let result_json = json!(result.unwrap()).to_string();
+        Either::Left(HttpResponse::Ok().body(result_json))
     } else {
         Either::Right(HttpResponse::BadRequest().body("Not FOUND"))
     }
