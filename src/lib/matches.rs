@@ -10,7 +10,7 @@ struct MatchInfo {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-struct MatchInfoResponse {
+pub struct MatchInfoResponse {
     info: MatchInfo,
 }
 
@@ -33,7 +33,7 @@ pub async fn get_summoner_matches(
     query: &SummonerGetDataQuery,
     puuid: &String,
     api_key: &String,
-) -> FetchResult<Vec<String>> {
+) -> FetchResult<Vec<MatchInfoResponse>> {
     println!("hello");
     let url = format!(
         "https://{0}.api.riotgames.com/lol/match/v5/matches/by-puuid/{1}/ids?start=0&count={2}&api_key={3}",
@@ -41,10 +41,11 @@ pub async fn get_summoner_matches(
     );
     let raw_response = reqwest::get(url).await?.text().await?;
     let response = serde_json::from_str::<Vec<String>>(&raw_response)?;
+    let mut matches: Vec<MatchInfoResponse> = vec![];
     for match_id in &response {
         let match_info_result = get_match_info(query, match_id, api_key).await;
-
-        println!("{:#?}", match_info_result.unwrap())
+        let match_info = match_info_result.unwrap();
+        matches.push(match_info);
     }
-    Ok(response)
+    Ok(matches)
 }
