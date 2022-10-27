@@ -1,5 +1,3 @@
-use std::fmt;
-
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -44,15 +42,6 @@ pub struct SummonerRankInfo {
 pub enum SummonerRanksResponse {
     Ranks(Vec<SummonerRankInfo>),
     Error(Status),
-}
-
-#[derive(Debug, Clone)]
-struct GetSummonerRanksError {}
-
-impl fmt::Display for GetSummonerRanksError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "invalid something broke")
-    }
 }
 
 pub async fn get_summoner_info(
