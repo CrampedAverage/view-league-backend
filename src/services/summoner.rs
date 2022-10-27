@@ -1,11 +1,20 @@
+use serde::{Deserialize, Serialize};
+
 use crate::lib::{matches, summoner};
 use crate::SummonerGetDataQuery;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SummonerData {
+    info: summoner::SummonerInfoResponse,
+    ranks: summoner::SummonerRanksResponse,
+    matches: Vec<matches::MatchInfoResponse>,
+}
 
 #[allow(unused_variables)]
 pub async fn get_summoner_data(
     query: SummonerGetDataQuery,
     api_key: &String,
-) -> Result<summoner::SummonerInfoResponse, String> {
+) -> Result<SummonerData, String> {
     let summoner_info_result = summoner::get_summoner_info(&query, api_key).await;
     if summoner_info_result.is_err() {
         let error_response = format!("Error: {}", summoner_info_result.unwrap_err());
@@ -27,6 +36,12 @@ pub async fn get_summoner_data(
         let error_response = format!("Error: {}", summoner_matches_result.unwrap_err());
         return Err(error_response);
     }
+    let summoner_matches = summoner_matches_result.unwrap();
 
-    return Ok(summoner_info);
+    let summoner_data = SummonerData {
+        info: summoner_info,
+        ranks: summoner_ranks,
+        matches: summoner_matches,
+    };
+    return Ok(summoner_data);
 }
