@@ -67,9 +67,12 @@ async fn main() -> std::io::Result<()> {
     let port = str::parse(&std::env::var("PORT").unwrap_or("4000".to_string())).unwrap();
 
     HttpServer::new(move || {
-        App::new()
-            .wrap(middleware::Compress::default())
-            .service(web::scope("/api").service(champions).service(summoner))
+        App::new().wrap(middleware::Compress::default()).service(
+            web::scope("/api")
+                .service(champions)
+                .service(summoner)
+                .service(match_by_id),
+        )
     })
     .bind(("127.0.0.1", port))?
     .run()
