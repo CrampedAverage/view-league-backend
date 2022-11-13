@@ -5,7 +5,7 @@ use crate::{types::FetchResult, SummonerGetDataQuery};
 #[allow(non_snake_case)]
 #[derive(Deserialize, Serialize, Debug)]
 struct MatchInfo {
-    gameCreation: u128,
+    gameCreation: u64,
     gameDuration: u64,
 }
 
@@ -14,14 +14,14 @@ pub struct MatchInfoResponse {
     info: MatchInfo,
 }
 
-async fn get_match_info(
-    query: &SummonerGetDataQuery,
-    match_id: &String,
+pub async fn get_match_info(
+    continent: &String,
+    match_id: String,
     api_key: &String,
 ) -> FetchResult<MatchInfoResponse> {
     let url = format!(
         "https://{0}.api.riotgames.com/lol/match/v5/matches/{1}?api_key={2}",
-        query.continent, match_id, api_key
+        continent, match_id, api_key
     );
     println!("{}", url);
     let raw_response = reqwest::get(url).await?.text().await?;
@@ -33,19 +33,16 @@ pub async fn get_summoner_matches(
     query: &SummonerGetDataQuery,
     puuid: &String,
     api_key: &String,
-) -> FetchResult<Vec<MatchInfoResponse>> {
-    println!("hello");
+) -> FetchResult<Vec<String>> {
     let url = format!(
         "https://{0}.api.riotgames.com/lol/match/v5/matches/by-puuid/{1}/ids?start=0&count={2}&api_key={3}",
-        query.continent, puuid, 1,api_key
+        query.continent, puuid, 10,api_key
     );
     let raw_response = reqwest::get(url).await?.text().await?;
     let response = serde_json::from_str::<Vec<String>>(&raw_response)?;
-    let mut matches: Vec<MatchInfoResponse> = vec![];
+    let mut matches: Vec<String> = vec![];
     for match_id in &response {
-        let match_info_result = get_match_info(query, match_id, api_key).await;
-        let match_info = match_info_result.unwrap();
-        matches.push(match_info);
+        matches.push(match_id.to_string());
     }
     Ok(matches)
 }
