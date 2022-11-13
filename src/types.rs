@@ -1,5 +1,6 @@
 use std::error;
 
+use actix_web::{Either, HttpResponse};
 use serde::{Deserialize, Serialize};
 
 pub type FetchResult<T> = std::result::Result<T, Box<dyn error::Error>>;
@@ -13,3 +14,5 @@ struct StatusBody {
 pub struct Status {
     status: StatusBody,
 }
+
+pub type Responder = Either<HttpResponse, HttpResponse>;

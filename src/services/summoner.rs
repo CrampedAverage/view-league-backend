@@ -7,10 +7,9 @@ use crate::SummonerGetDataQuery;
 pub struct SummonerData {
     info: summoner::SummonerInfoResponse,
     ranks: summoner::SummonerRanksResponse,
-    matches: Vec<matches::MatchInfoResponse>,
+    matches: Vec<String>,
 }
 
-#[allow(unused_variables)]
 pub async fn get_summoner_data(
     query: SummonerGetDataQuery,
     api_key: &String,
