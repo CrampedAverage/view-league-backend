@@ -1,16 +1,15 @@
 use crate::{
     configuration::get_api_key,
-    services::{
-        champions::get_champions, matches::get_match_info_by_id, summoner::get_summoner_data,
-    },
+    services::{champions::get_champions, matches::get_match_info_by_id},
     types::Responder,
 };
 use actix_web::{get, middleware, web, App, Either, HttpResponse, HttpServer};
-use serde::Deserialize;
+use routes::summoner::summoner;
 use serde_json::json;
 
 mod configuration;
 mod lib;
+mod routes;
 mod services;
 mod types;
 
@@ -37,27 +36,6 @@ async fn champions() -> Responder {
         Either::Left(HttpResponse::Ok().body(data))
     } else {
         Either::Right(HttpResponse::BadRequest().body("Bad Request"))
-    }
-}
-
-#[derive(Deserialize, Debug)]
-pub struct SummonerGetDataQuery {
-    summoner_name: String,
-    region: String,
-    continent: String,
-}
-
-#[get("/summoner/get-data")]
-async fn summoner(query: web::Query<SummonerGetDataQuery>) -> Responder {
-    let api_key = get_api_key();
-    println!("hehe");
-    let summoner_data_result = get_summoner_data(query.into_inner(), &api_key).await;
-    if summoner_data_result.is_ok() {
-        let summoner_data = summoner_data_result.unwrap();
-        let response = json!(summoner_data).to_string();
-        Either::Left(HttpResponse::Ok().body(response))
-    } else {
-        Either::Right(HttpResponse::BadRequest().body("Not FOUND"))
     }
 }
 

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{types::FetchResult, SummonerGetDataQuery};
+use crate::types::{FetchResult, SummonerGetDataQuery};
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Serialize, Debug)]

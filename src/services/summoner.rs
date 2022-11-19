@@ -1,14 +1,5 @@
-use serde::{Deserialize, Serialize};
-
 use crate::lib::{matches, summoner};
-use crate::SummonerGetDataQuery;
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct SummonerData {
-    info: summoner::SummonerInfoResponse,
-    ranks: summoner::SummonerRanksResponse,
-    matches: Vec<String>,
-}
+use crate::types::{SummonerData, SummonerGetDataQuery};
 
 pub async fn get_summoner_data(
     query: SummonerGetDataQuery,
