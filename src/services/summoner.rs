@@ -20,18 +20,18 @@ pub async fn get_summoner_data(
     }
     let summoner_ranks = summoner_ranks_result.unwrap();
 
-    let summoner_matches_result =
+    let summoner_match_ids_result =
         matches::get_summoner_matches(&query, &summoner_info.puuid, api_key).await;
-    if summoner_matches_result.is_err() {
-        let error_response = format!("Error: {}", summoner_matches_result.unwrap_err());
+    if summoner_match_ids_result.is_err() {
+        let error_response = format!("Error: {}", summoner_match_ids_result.unwrap_err());
         return Err(error_response);
     }
-    let summoner_matches = summoner_matches_result.unwrap();
+    let summoner_match_ids = summoner_match_ids_result.unwrap();
 
     let summoner_data = SummonerData {
         info: summoner_info,
         ranks: summoner_ranks,
-        matches: summoner_matches,
+        match_ids: summoner_match_ids,
     };
     return Ok(summoner_data);
 }

@@ -40,9 +40,9 @@ pub async fn get_summoner_matches(
     );
     let raw_response = reqwest::get(url).await?.text().await?;
     let response = serde_json::from_str::<Vec<String>>(&raw_response)?;
-    let mut matches: Vec<String> = vec![];
+    let mut match_ids: Vec<String> = vec![];
     for match_id in &response {
-        matches.push(match_id.to_string());
+        match_ids.push(match_id.to_string());
     }
-    Ok(matches)
+    Ok(match_ids)
 }

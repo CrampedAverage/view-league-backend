@@ -66,5 +66,5 @@ pub enum SummonerRanksResponse {
 pub struct SummonerData {
     pub info: SummonerInfoResponse,
     pub ranks: SummonerRanksResponse,
-    pub matches: Vec<String>,
+    pub match_ids: Vec<String>,
 }
