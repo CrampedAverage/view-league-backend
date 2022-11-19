@@ -4,9 +4,28 @@ use crate::types::{FetchResult, SummonerGetDataQuery};
 
 #[allow(non_snake_case)]
 #[derive(Deserialize, Serialize, Debug)]
+struct ParticipantInfo {
+    summonerName: String,
+    teamId: u8,
+    winS: u8,
+    kills: u8,
+    item0: u32,
+    item1: u32,
+    item2: u32,
+    item3: u32,
+    item4: u32,
+    item5: u32,
+    item6: u32,
+}
+
+#[allow(non_snake_case)]
+#[derive(Deserialize, Serialize, Debug)]
 struct MatchInfo {
     gameCreation: u64,
     gameDuration: u64,
+    gameId: u64,
+    gameVersion: String,
+    participants: Vec<ParticipantInfo>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
