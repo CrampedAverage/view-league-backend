@@ -7,7 +7,7 @@ use crate::types::{FetchResult, SummonerGetDataQuery};
 struct ParticipantInfo {
     summonerName: String,
     teamId: u8,
-    winS: u8,
+    win: bool,
     kills: u8,
     item0: u32,
     item1: u32,
